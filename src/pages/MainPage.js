@@ -6,11 +6,29 @@ export default function MainPage() {
   const [sourceCurrency, setSourceCurrency] = useState('');
   const [targetCurrency, setTargetCurrency] = useState('');
   const [amountInSourceCurrency, setAmountInSourceCurrency] = useState(0);
-  const [amountIntargetCurrency, setAmountInTargetCurrency] = useState(0);
+  const [amountInTargetCurrency, setAmountInTargetCurrency] = useState(0);
   const [currencyNames, setCurrencyNames] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    try {
+      const calculatedResponse = await axios.get(
+        'http://localhost:3001/convert',
+        {
+          params: {
+            date,
+            sourceCurrency,
+            targetCurrency,
+            amountInSourceCurrency,
+          },
+        }
+      );
+
+      setAmountInTargetCurrency(calculatedResponse.data);
+    } catch (error) {
+      console.error(error);
+    }
     console.log(date, sourceCurrency, targetCurrency, amountInSourceCurrency);
   };
 
@@ -134,6 +152,13 @@ export default function MainPage() {
           </form>
         </section>
       </div>
+      <section className="lg:mx-72 mt-5">
+        {amountInTargetCurrency} {currencyNames[sourceCurrency]} is equal to{' '}
+        <span className="text-green-500 font-bold">
+          {amountInTargetCurrency}
+        </span>{' '}
+        in {currencyNames[targetCurrency]}
+      </section>
     </div>
   );
 }
